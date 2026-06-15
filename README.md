@@ -1,6 +1,6 @@
-# Softwarence LTD TradeLedger
+# shareTrack by softwarenceLTD
 
-Softwarence LTD TradeLedger is a share ledger application that helps users upload share information, track holdings, and keep ownership data up to date.
+shareTrack by softwarenceLTD is a share ledger application that helps users upload share information, track holdings, and keep ownership data up to date.
 
 ## Getting Started
 

@@ -9,8 +9,8 @@ import { ThemeProvider } from "next-themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Softwarence LTD TradeLedger",
-  description: "Share ledger app for uploading and tracking share information.",
+  title: "shareTrack by softwarenceLTD",
+  description: "Share ledger app by softwarenceLTD for uploading and tracking share information.",
 };
 
 interface RootLayoutProps {

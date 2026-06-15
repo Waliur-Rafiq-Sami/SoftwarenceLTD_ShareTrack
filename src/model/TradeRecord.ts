@@ -60,6 +60,4 @@ TradeRecordSchema.pre("save", function (next) {
   next();
 });
 
-export const TradeRecord =
-  mongoose.models.TradeRecord ||
-  mongoose.model<ITradeRecord>("TradeRecord", TradeRecordSchema);
+export const TradeRecord = mongoose.models.TradeRecord || mongoose.model<ITradeRecord>("TradeRecord", TradeRecordSchema);

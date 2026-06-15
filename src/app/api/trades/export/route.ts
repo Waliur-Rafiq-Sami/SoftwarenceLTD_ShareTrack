@@ -108,7 +108,10 @@ export async function POST(request: Request) {
   // 1. Auth Check
   const session = await getServerSession(authOptions);
   if (!session?.user?._id) {
-    return NextResponse.json({ success: false, message: "Unauthorized access detected." }, { status: 401 });
+    return NextResponse.json(
+      { success: false, message: "Unauthorized access detected." },
+      { status: 401 },
+    );
   }
 
   try {
@@ -116,7 +119,17 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Destructure filters from body (these match the keys you pass from ExportModal)
-    const { searchInstrument, searchAction, startDate, endDate, minAmount, maxAmount, sortBy, sortOrder, exportLimit } = body;
+    const {
+      searchInstrument,
+      searchAction,
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+      sortBy,
+      sortOrder,
+      exportLimit,
+    } = body;
 
     // 3. Query Construction
     const query: Record<string, any> = { userId: session.user._id };
@@ -147,7 +160,12 @@ export async function POST(request: Request) {
 
     // 4. Dynamic Sorting
     const sortConfig: Record<string, number> = {};
-    const allowedSortFields = ["rate", "commission", "transactionDate", "amount"];
+    const allowedSortFields = [
+      "rate",
+      "commission",
+      "transactionDate",
+      "amount",
+    ];
 
     const direction = sortOrder === "asc" ? 1 : -1;
 
@@ -180,6 +198,9 @@ export async function POST(request: Request) {
     );
   } catch (error: any) {
     console.error("Export API Error:", error);
-    return NextResponse.json({ success: false, message: "Internal server error during data export" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Internal server error during data export" },
+      { status: 500 },
+    );
   }
 }
