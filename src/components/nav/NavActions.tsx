@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/lib/toast-service";
 
 import LogoutDialog from "./LogoutDialog";
-import UnifiedProfileModal from "@/app/components/profile/UnifiedProfileModal";
+import UnifiedProfileModal from "@/components/profile/UnifiedProfileModal";
 
 export default function NavActions() {
   const { data: session, status } = useSession();

@@ -25,7 +25,7 @@ export default function VerificationEmail({
   return (
     <Html lang="en" dir="ltr">
       <Head>
-        <title>TradeLedger Verification Code</title>
+        <title>ShareTrack Verification Code</title>
         <Font
           fontFamily="Inter"
           fallbackFontFamily="Arial"
@@ -33,13 +33,13 @@ export default function VerificationEmail({
           fontStyle="normal"
         />
       </Head>
-      <Preview>Your TradeLedger verification code: {otp}</Preview>
+      <Preview>Your ShareTrack verification code: {otp}</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header Section */}
           <Section style={header}>
             <Text style={logoText}>
-              Trade<span style={logoBold}>Ledger</span>
+              Share<span style={logoBold}>Track</span>
             </Text>
             <Text style={companyName}>Product of SoftwarenceLTD</Text>
           </Section>
@@ -53,7 +53,7 @@ export default function VerificationEmail({
               Hello <strong>{username}</strong>,
             </Text>
             <Text style={paragraph}>
-              Welcome to TradeLedger! To secure your account and complete your
+              Welcome to ShareTrack! To secure your account and complete your
               registration registration pipeline, please use the verification
               code provided below.
             </Text>
@@ -81,7 +81,7 @@ export default function VerificationEmail({
             <Text style={footerText}>
               © 2026 <strong>SoftwarenceLTD</strong>. All rights reserved.{" "}
               <br />
-              Digital solutions for the modern trade.
+              Digital solutions for the modern Share.
             </Text>
             <Row style={footerLinks}>
               <Link href="#" style={link}>
