@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import { UserLedger } from "@/model/UserLedger";
-import { ShareRecord } from "@/model/ShareRecord";
+import { ShareRecord } from "../../../../model/ShareRecord";
 import mongoose from "mongoose";
 
 // Utility function to avoid floating point precision issues

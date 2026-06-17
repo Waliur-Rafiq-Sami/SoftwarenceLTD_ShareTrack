@@ -7,7 +7,7 @@ import dbConnect from "@/lib/dbConnect";
 
 import { CompanyHolding } from "@/model/CompanyHolding";
 import { UserLedger } from "@/model/UserLedger";
-import { ShareRecord } from "@/model/ShareRecord";
+import { ShareRecord } from "../../../../model/ShareRecord";
 
 // Utility to ensure perfect financial precision
 const roundToTwo = (num: number) =>

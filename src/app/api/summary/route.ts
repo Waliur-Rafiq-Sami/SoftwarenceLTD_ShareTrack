@@ -7,7 +7,7 @@ import dbConnect from "@/lib/dbConnect";
 
 import { UserLedger, IUserLedger } from "@/model/UserLedger";
 import { CompanyHolding } from "@/model/CompanyHolding";
-import { IShareRecord, ShareRecord } from "@/model/ShareRecord";
+import { IShareRecord, ShareRecord } from "../../../model/ShareRecord";
 
 const round = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 

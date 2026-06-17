@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 
-import { ShareRecord } from "@/model/ShareRecord";
+import { ShareRecord } from "../../../../model/ShareRecord";
 import { UserLedger } from "@/model/UserLedger";
 import { CompanyHolding } from "@/model/CompanyHolding";
 
