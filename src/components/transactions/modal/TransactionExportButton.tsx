@@ -256,24 +256,27 @@ export function TransactionExportButton({
 
     // Extract columns and rows for autoTable
     const columns = Object.keys(data[0]);
-    const rows = data.map((obj) => Object.values(obj));
+    // const rows = data.map((obj) => Object.values(obj));
+    const rows = data.map((obj) => Object.values(obj).map(String));
 
     // Generate Table
     autoTable(doc, {
       startY: 64, // Pushed down to handle metadata grid cleanly
       head: [columns],
-      body: rows,
+      body: rows, // TypeScript is now happy with this
       theme: "striped",
       headStyles: { fillColor: [15, 23, 42] },
       styles: { fontSize: 8 },
       willDrawCell: (data) => {
-        if (data.row.raw && data.row.raw[0] === "SUMMARY TOTALS") {
+        // Cast the raw row to string[] so TypeScript allows index access
+        const rawRow = data.row.raw as string[];
+
+        if (rawRow && rawRow[0] === "SUMMARY TOTALS") {
           doc.setFont("helvetica", "bold");
           doc.setFillColor(241, 245, 249);
         }
       },
     });
-
     // --- Enterprise Footer ---
     const finalY = (doc as any).lastAutoTable.finalY || 64;
 

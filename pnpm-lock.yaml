@@ -71,6 +71,9 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
+      calendar:
+        specifier: ^0.1.1
+        version: 0.1.1
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
@@ -83,6 +86,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.21
+      embla-carousel:
+        specifier: ^8.6.0
+        version: 8.6.0
       embla-carousel-autoplay:
         specifier: ^8.0.0-rc17
         version: 8.6.0(embla-carousel@8.6.0)
@@ -102,8 +108,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(jspdf@4.2.1)
       lucide-react:
-        specifier: ^0.303.0
-        version: 0.303.0(react@18.3.1)
+        specifier: ^1.20.0
+        version: 1.20.0(react@18.3.1)
       mongodb:
         specifier: ^7.3.0
         version: 7.3.0
@@ -1717,6 +1723,9 @@ packages:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
 
+  calendar@0.1.1:
+    resolution: {integrity: sha512-CExn+MxSU1pCsjYiS+Cx8d1MtIZqezxRhpIu8odr1oqvYG/0C1m8lvehHxTl1FslgKbOD7Z5QuEcyk8sGgpZLQ==}
+
   call-bind-apply-helpers@1.0.2:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
     engines: {node: '>= 0.4'}
@@ -2824,10 +2833,10 @@ packages:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
 
-  lucide-react@0.303.0:
-    resolution: {integrity: sha512-B0B9T3dLEFBYPCUlnUS1mvAhW1craSbF9HO+JfBjAtpFUJ7gMIqmEwNSclikY3RiN2OnCkj/V1ReAQpaHae8Bg==}
+  lucide-react@1.20.0:
+    resolution: {integrity: sha512-jhXLeC/7m0/tjL1nzMdKk6x256zWA6AtbhTVreHOiKPoeX2d6MK4FbyIQPpVq0E6iPWBisyy1TW+pEge/uMEuQ==}
     peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -5506,6 +5515,8 @@ snapshots:
     dependencies:
       streamsearch: 1.1.0
 
+  calendar@0.1.1: {}
+
   call-bind-apply-helpers@1.0.2:
     dependencies:
       es-errors: 1.3.0
@@ -6806,7 +6817,7 @@ snapshots:
     dependencies:
       yallist: 4.0.0
 
-  lucide-react@0.303.0(react@18.3.1):
+  lucide-react@1.20.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 

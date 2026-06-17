@@ -136,7 +136,7 @@ export function Footer() {
                   />
                 </svg>
                 <span className="leading-relaxed">
-                  Unit 4, Storm 12 Plaza Shopping Centre, 54 St Mary's Rd,
+                  Unit 4, Storm 12 Plaza Shopping Centre, 54 St Mary&apos;s Rd,
                   Southampton, UK, SO14 0BH
                 </span>
               </li>

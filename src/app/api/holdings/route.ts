@@ -87,7 +87,9 @@ export async function GET(req: NextRequest) {
       CompanyHolding.countDocuments(query),
 
       // C. Fetch the user's master ledger for cash balances
-      UserLedger.findOne({ userId: userObjectId }).lean().exec(),
+      UserLedger.findOne({ userId: userObjectId })
+        .lean()
+        .exec() as Promise<any>,
 
       // D. Calculate true global portfolio stats regardless of pagination
       CompanyHolding.aggregate([

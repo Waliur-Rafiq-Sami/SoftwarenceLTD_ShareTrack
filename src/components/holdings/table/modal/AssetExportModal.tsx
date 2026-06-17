@@ -672,7 +672,8 @@ export default function AssetExportModal({ asset }: AssetExportModalProps) {
 
     // Extract columns and rows for autoTable
     const columns = Object.keys(data[0]);
-    const rows = data.map((obj) => Object.values(obj));
+    // const rows = data.map((obj) => Object.values(obj));
+    const rows = data.map((obj) => Object.values(obj).map(String));
 
     // Generate Table
     autoTable(doc, {
@@ -682,8 +683,17 @@ export default function AssetExportModal({ asset }: AssetExportModalProps) {
       theme: "striped",
       headStyles: { fillColor: [15, 23, 42] },
       styles: { fontSize: 8 },
+      // willDrawCell: (data) => {
+      //   if (data.row.raw && data.row.raw[0] === "SUMMARY TOTALS") {
+      //     doc.setFont("helvetica", "bold");
+      //     doc.setFillColor(241, 245, 249);
+      //   }
+      // },
       willDrawCell: (data) => {
-        if (data.row.raw && data.row.raw[0] === "SUMMARY TOTALS") {
+        // Cast the raw row to an array of strings so TypeScript knows [0] is safe to access
+        const rawRow = data.row.raw as string[];
+
+        if (rawRow && rawRow[0] === "SUMMARY TOTALS") {
           doc.setFont("helvetica", "bold");
           doc.setFillColor(241, 245, 249);
         }

@@ -63,13 +63,18 @@ export default function HoldingsPage() {
 
   // 5. Transform API pagination to match PaginationControls interface
   const rawMeta = data?.meta?.pagination || {};
+  // const paginationData = {
+  //   currentPage: rawMeta.page || 1,
+  //   totalPages: rawMeta.totalPages || 1,
+  //   totalRecords: rawMeta.total || 0,
+  //   hasNextPage: rawMeta.hasNextPage || false,
+  // };
   const paginationData = {
-    currentPage: rawMeta.page || 1,
-    totalPages: rawMeta.totalPages || 1,
-    totalRecords: rawMeta.total || 0,
-    hasNextPage: rawMeta.hasNextPage || false,
+    currentPage: data?.meta?.pagination?.page || 1,
+    totalPages: data?.meta?.pagination?.totalPages || 1,
+    totalRecords: data?.meta?.pagination?.total || 0,
+    hasNextPage: data?.meta?.pagination?.hasNextPage || false,
   };
-
   // 6. Stateful Event Mutators (Resets page to 1 on filter changes)
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);

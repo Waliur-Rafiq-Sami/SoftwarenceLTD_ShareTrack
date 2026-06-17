@@ -112,7 +112,7 @@ export function CompanySearch({
               className="w-full text-left px-4 py-2.5 text-sm bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-medium flex items-center gap-2 border-t dark:border-slate-800 transition-colors"
             >
               <PlusCircle className="h-4 w-4" />
-              Add "{value}" as new
+              Add {`"${value}"`} as new
             </button>
           )}
         </div>
