@@ -10,7 +10,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "shareTrack by softwarenceLTD",
-  description: "Share ledger app by softwarenceLTD for uploading and tracking share information.",
+  description:
+    "Share ledger app by softwarenceLTD for uploading and tracking share information.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 interface RootLayoutProps {
