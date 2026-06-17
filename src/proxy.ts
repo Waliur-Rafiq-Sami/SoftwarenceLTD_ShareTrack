@@ -5,8 +5,14 @@ export const config = {
   matcher: ["/dashboard/:path*", "/sign-in", "/sign-up", "/", "/verify/:path*"],
 };
 
+// Notice this is now "proxy" instead of "middleware"
 export async function proxy(request: NextRequest) {
-  const token = await getToken({ req: request });
+  // Explicitly passing the secret so NextAuth finds the user
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
   const url = request.nextUrl;
 
   // Redirect to dashboard if the user is already authenticated
@@ -21,6 +27,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  // Redirect to sign-in if the user is NOT authenticated
+  // and trying to access the dashboard
   if (!token && url.pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
