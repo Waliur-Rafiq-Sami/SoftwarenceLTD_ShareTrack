@@ -1,304 +1,183 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { ActiveHoldingsCard } from "@/components/dashboard/ActiveHoldingsCard";
+import { RecentTransactionsCard } from "@/components/dashboard/RecentTransactionsCard";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { RefreshCw } from "lucide-react";
+  Wallet,
+  TrendingUp,
+  ArrowDownToLine,
+  Activity,
+  Plus,
+  Minus,
+} from "lucide-react";
+import { Navbar } from "@/components/nav/Navbar";
+import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
+import { Button } from "@/components/ui/button";
+import { TradeModal } from "@/components/dashboard/TradeModal";
+import { Card, CardContent } from "@/components/ui/card";
+import { WalletModal } from "@/components/dashboard/WalletModal";
 
-export default function TestingHub() {
-  const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<any>(null);
-  const [dashboardData, setDashboardData] = useState<any>(null);
-
-  const fetchDashboard = async () => {
-    try {
-      const res = await fetch("/api/summary");
-      const data = await res.json();
-      console.log(data);
-      if (res.ok) setDashboardData(data.data);
-    } catch (err) {
-      console.error("Failed to fetch dashboard");
-    }
-  };
-
-  const callApi = async (url: string, method: string, body: any) => {
-    setLoading(true);
-    setResponse(null);
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      setResponse({ status: res.status, data });
-      if (res.ok) {
-        toast.success("API Call Successful");
-        fetchDashboard();
-      } else {
-        toast.error("API Call Failed: " + (data.message || "Unknown error"));
-      }
-    } catch (err) {
-      setResponse({ error: "Network/Fetch Error" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Enterprise Trading Test Suite</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Tabs defaultValue="execute">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="execute">Trade</TabsTrigger>
-            <TabsTrigger value="reverse">Reverse</TabsTrigger>
-            <TabsTrigger value="wallet">Wallet</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="dashboard">
-            <DashboardView data={dashboardData} onRefresh={fetchDashboard} />
-          </TabsContent>
-          <TabsContent value="execute">
-            <TradeForm
-              onSubmit={(d) => callApi("/api/trade/execute", "POST", d)}
-              loading={loading}
-            />
-          </TabsContent>
-          <TabsContent value="reverse">
-            <ReverseForm
-              onSubmit={(d) => callApi("/api/trade/reverse", "POST", d)}
-              loading={loading}
-            />
-          </TabsContent>
-          <TabsContent value="wallet">
-            <WalletForm
-              onSubmit={(d) => callApi("/api/wallet/transaction", "POST", d)}
-              loading={loading}
-            />
-          </TabsContent>
-        </Tabs>
-
-        {/* RESPONSE VIEWER */}
-        <div className="bg-slate-950 p-6 rounded-lg text-white font-mono text-sm overflow-auto h-[600px]">
-          <h2 className="text-lg font-bold mb-4 text-green-400">
-            API Response Payload
-          </h2>
-          {response ? (
-            <pre>{JSON.stringify(response, null, 2)}</pre>
-          ) : (
-            <p className="text-gray-500">Perform an action...</p>
-          )}
+// --- Reusable Metric Card Component ---
+const MetricCard = ({
+  title,
+  value,
+  description,
+  icon,
+  onAction,
+  actionType,
+}: any) => (
+  <Card className="overflow-hidden border-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white shadow-xl">
+    <CardContent className="p-6">
+      <div className="flex flex-col gap-4">
+        {/* Header & Icon */}
+        <div className="flex items-center gap-2 text-slate-400 text-sm font-medium">
+          {icon}
+          {title}
         </div>
+
+        {/* Value & Description */}
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">{value}</h2>
+          <p className="text-sm text-slate-500 mt-1">{description}</p>
+        </div>
+
+        {/* Conditional Buttons for Main Card */}
+        {onAction && (
+          <div className="flex items-center gap-3 pt-2">
+            <Button
+              size="sm"
+              onClick={() => onAction("DEPOSIT")}
+              className="flex-1 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Deposit
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onAction("WITHDRAW")}
+              className="flex-1 h-10 rounded-lg border-slate-700 bg-slate-900/50 hover:bg-slate-800 text-white"
+            >
+              <Minus className="h-4 w-4 mr-2" /> Withdraw
+            </Button>
+          </div>
+        )}
       </div>
-    </div>
+    </CardContent>
+  </Card>
+);
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+    value,
   );
-}
 
-// --- FORMS ---
-
-function TradeForm({ onSubmit, loading }: any) {
-  const [form, setForm] = useState({
-    companyName: "",
-    quantity: 0,
-    rate: 0,
-    commissionType: "FIXED", // Matches API expectation
-    commissionValue: 0, // Matches API expectation
-    actionType: "BUY",
+export default function DashboardPage() {
+  const { data, isLoading, isError, refetch } = useDashboardData();
+  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [walletModal, setWalletModal] = useState({
+    isOpen: false,
+    type: "DEPOSIT",
   });
 
+  if (isError)
+    return (
+      <div className="p-6 text-center text-rose-500">Error loading data.</div>
+    );
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Execute Trade</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label>Company Name</Label>
-          <Input
-            placeholder="AAPL"
-            onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Quantity</Label>
-            <Input
-              type="number"
-              onChange={(e) =>
-                setForm({ ...form, quantity: Number(e.target.value) })
-              }
-            />
-          </div>
-          <div>
-            <Label>Rate</Label>
-            <Input
-              type="number"
-              onChange={(e) =>
-                setForm({ ...form, rate: Number(e.target.value) })
-              }
-            />
-          </div>
-        </div>
-
-        {/* COMMISSION SETTINGS */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Commission Type</Label>
-            <Select
-              onValueChange={(v) => setForm({ ...form, commissionType: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="FIXED" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="FIXED">FIXED</SelectItem>
-                <SelectItem value="PERCENTAGE">PERCENTAGE</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Commission Value</Label>
-            <Input
-              type="number"
-              placeholder="0"
-              onChange={(e) =>
-                setForm({ ...form, commissionValue: Number(e.target.value) })
-              }
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label>Action Type</Label>
-          <Select onValueChange={(v) => setForm({ ...form, actionType: v })}>
-            <SelectTrigger>
-              <SelectValue placeholder="BUY" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="BUY">BUY</SelectItem>
-              <SelectItem value="SELL">SELL</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button
-          className="w-full"
-          disabled={loading}
-          onClick={() => onSubmit(form)}
-        >
-          Execute Trade
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-function ReverseForm({ onSubmit, loading }: any) {
-  const [txId, setTxId] = useState("");
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Reverse Transaction</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Label>Transaction ID (Reference)</Label>
-        <Input
-          className="mt-2"
-          placeholder="Copy ID from Response Viewer"
-          onChange={(e) => setTxId(e.target.value)}
-        />
-        <Button
-          className="mt-4 w-full"
-          variant="destructive"
-          disabled={loading}
-          onClick={() => onSubmit({ transactionId: txId })}
-        >
-          Reverse Transaction
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-function WalletForm({ onSubmit, loading }: any) {
-  const [form, setForm] = useState({ amount: 0, actionType: "DEPOSIT" });
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Wallet Transaction</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Input
-          type="number"
-          placeholder="Amount"
-          onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
-        />
-        <Select onValueChange={(v) => setForm({ ...form, actionType: v })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Action" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="DEPOSIT">DEPOSIT</SelectItem>
-            <SelectItem value="WITHDRAW">WITHDRAW</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button
-          className="w-full"
-          disabled={loading}
-          onClick={() => onSubmit(form)}
-        >
-          Proceed Transaction
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-function DashboardView({ data, onRefresh }: any) {
-  if (!data) return <p>Loading dashboard...</p>;
-  return (
-    <Card>
-      <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle>Portfolio Audit</CardTitle>
-        <Button size="sm" variant="outline" onClick={onRefresh}>
-          <RefreshCw className="w-4 h-4 mr-2" /> Refresh
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="p-3 bg-gray-50 rounded">
-          <p className="text-sm text-gray-500">Net Worth</p>
-          <p className="text-xl font-bold">${data.overview.netWorth}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="p-3 bg-gray-50 rounded">
-            <p className="text-sm text-gray-500">Cash Balance</p>
-            <p className="font-semibold">${data.overview.cashBalance}</p>
-          </div>
-          <div className="p-3 bg-gray-50 rounded">
-            <p className="text-sm text-gray-500">Comm. Paid</p>
-            <p className="font-semibold">
-              ${data.analytics.totalCommissionPaid}
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020817]">
+      <main className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-6 border-b border-slate-100 dark:border-slate-800">
+          <div className="space-y-0.5">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Overview
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Welcome back! Manage your portfolio here.
             </p>
           </div>
+          <Button
+            onClick={() => setIsTradeModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 shadow-md"
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Transaction
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Loading State */}
+        {isLoading || !data?.data ? (
+          <DashboardSkeleton />
+        ) : (
+          <>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Main Net Worth Card (Includes Actions) */}
+              <MetricCard
+                title="Total Net Worth"
+                value={formatCurrency(data.data.overview.netWorth)}
+                description="Total portfolio value"
+                icon={<Wallet className="h-4 w-4" />}
+                onAction={(type: string) =>
+                  setWalletModal({ isOpen: true, type })
+                }
+              />
+
+              {/* Smaller Stat Cards (No Actions) */}
+              <MetricCard
+                title="Cash Balance"
+                value={formatCurrency(data.data.overview.cashBalance)}
+                description="Available for trading"
+                icon={<ArrowDownToLine className="h-4 w-4" />}
+              />
+
+              <MetricCard
+                title="Realized Profit"
+                value={formatCurrency(data.data.overview.totalRealizedProfit)}
+                description="Total gains taken"
+                icon={<TrendingUp className="h-4 w-4" />}
+              />
+
+              <MetricCard
+                title="Trading Volume"
+                value={formatCurrency(
+                  data.data.analytics.totalBuyVolume +
+                    data.data.analytics.totalSellVolume,
+                )}
+                description="Total market activity"
+                icon={<Activity className="h-4 w-4" />}
+              />
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <ActiveHoldingsCard holdings={data.data.activeHoldings} />
+              <RecentTransactionsCard
+                transactions={data.data.recentTransactions}
+              />
+            </div>
+          </>
+        )}
+      </main>
+
+      <TradeModal
+        isOpen={isTradeModalOpen}
+        onClose={() => setIsTradeModalOpen(false)}
+        onSuccess={() => console.log("Trade success")}
+        onSuccess={() => {
+          console.log("Trade success");
+          refetch(); // Trigger update
+        }}
+      />
+
+      <WalletModal
+        isOpen={walletModal.isOpen}
+        type={walletModal.type as "DEPOSIT" | "WITHDRAW"}
+        onClose={() => setWalletModal((prev) => ({ ...prev, isOpen: false }))}
+        onSuccess={() => refetch()}
+      />
+    </div>
   );
 }

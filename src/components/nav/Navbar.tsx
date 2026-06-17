@@ -1,164 +1,143 @@
-// "use client";
+"use client";
 
-// import React, { useState } from "react";
-// import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import { useSession, signOut } from "next-auth/react";
-// import { LogOut, Landmark } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Landmark, Menu, X } from "lucide-react";
 
-// import { Button } from "@/components/ui/button";
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog";
-// import ThemeToggle from "@/components/ThemeToggle";
-// import { toast } from "@/lib/toast-service";
-// import { Skeleton } from "./ui/skeleton";
+import NavActions from "../Header/NavActions"; // আপনার আগের NavActions
+import { Skeleton } from "@/components/ui/skeleton";
 
-// // Importing your custom Sonner toast matrix
-// export default function Navbar() {
-//   const { data: session, status } = useSession();
-//   const router = useRouter();
-//   const [isLoggingOut, setIsLoggingOut] = useState(false);
+// নেভিগেশন লিংকগুলোর লিস্ট (সহজে মেনটেইন করার জন্য)
+const navLinks = [
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Holdings", href: "/holdings" },
+  { name: "Transactions", href: "/transactions" },
+];
 
-//   const handleLogout = async () => {
-//     setIsLoggingOut(true);
-//     try {
-//       await signOut({ redirect: false });
-//       toast.success({
-//         title: "Signed out successfully",
-//         description: "Thank you for using Trade Ledger.",
-//       });
-//       router.push("/sign-in");
-//       router.refresh();
-//     } catch (error) {
-//       toast.error({
-//         title: "Unable to sign out",
-//         description: "Something went wrong. Please try again.",
-//       });
-//     } finally {
-//       setIsLoggingOut(false);
-//     }
-//   };
+export function Navbar() {
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-//   return (
-//     <nav className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/80 backdrop-blur-md shadow-sm transition-colors duration-300">
-//       <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between relative">
-//         {/* LEFT SIDE - Logo (and Title on Mobile) */}
-//         <div className="flex items-center gap-3 flex-1 md:flex-none">
-//           <div className="bg-blue-500/10 p-2 rounded-xl border border-blue-500/20 shadow-inner">
-//             {/* You can replace Landmark with your actual image/logo */}
-//             <Landmark className="h-5 w-5 text-blue-500" />
-//           </div>
-//           {/* Mobile Title - Hidden on medium screens and up */}
-//           <Link
-//             href="/"
-//             className="font-bold tracking-tight text-lg md:hidden truncate max-w-[150px]"
-//           >
-//             TradeLedger
-//           </Link>
-//         </div>
-
-//         {/* CENTER - Main Title (Desktop Only) */}
-//         {/* Absolute positioning keeps it perfectly centered regardless of side content widths */}
-//         <div className="hidden md:flex flex-1 justify-center absolute left-1/2 -translate-x-1/2 pointer-events-none">
-//           <Link
-//             href="/"
-//             className="text-xl font-extrabold tracking-tight text-foreground pointer-events-auto hover:opacity-80 transition-opacity"
-//           >
-//             Share
-//             <span className="text-blue-500 font-black">Track</span>
-//           </Link>
-//         </div>
-//         {/* RIGHT SIDE - Actions (Theme & Logout) */}
-//         <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end">
-//           <ThemeToggle />
-//           {status === "loading" ? (
-//             <>
-//               <div className="flex items-center gap-2 pl-2">
-//                 <div className="h-9 w-24 rounded-md bg-muted/60 animate-pulse border border-border/50 flex items-center justify-center">
-//                   <Skeleton className="hidden sm:block h-full w-full rounded-md bg-primary/20" />
-//                 </div>
-//               </div>
-//             </>
-//           ) : (
-//             <>
-//               {session ? (
-//                 <AlertDialog>
-//                   <AlertDialogTrigger asChild>
-//                     <Button
-//                       variant="ghost"
-//                       className="gap-2 text-muted-foreground hover:text-rose-500 text-red-500 hover:bg-rose-500/10 transition-colors px-2 sm:px-4"
-//                     >
-//                       <LogOut className="h-4 w-4 sm:h-4 sm:w-4" />
-//                       <span className="hidden sm:inline font-semibold tracking-wide text-sm ">
-//                         Logout
-//                       </span>
-//                     </Button>
-//                   </AlertDialogTrigger>
-//                   <AlertDialogContent className="sm:max-w-[420px] border border-border/80 shadow-2xl rounded-xl">
-//                     <AlertDialogHeader>
-//                       <AlertDialogTitle className="text-xl font-bold tracking-tight flex items-center gap-2">
-//                         <LogOut className="h-5 w-5 text-rose-500" />
-//                         Secure Logout
-//                       </AlertDialogTitle>
-//                       <AlertDialogDescription className="text-sm font-medium text-muted-foreground leading-relaxed">
-//                         Are you sure you want to exit? You will need to
-//                         re-authenticate to access the TradeLedger system again.
-//                       </AlertDialogDescription>
-//                     </AlertDialogHeader>
-//                     <AlertDialogFooter className="mt-4 sm:mt-6">
-//                       <AlertDialogCancel className="font-medium tracking-wide transition-colors">
-//                         Cancel
-//                       </AlertDialogCancel>
-//                       <AlertDialogAction
-//                         onClick={(e) => {
-//                           e.preventDefault();
-//                           handleLogout();
-//                         }}
-//                         disabled={isLoggingOut}
-//                         className="bg-rose-600 hover:bg-rose-700 text-white font-semibold tracking-wide shadow-md transition-all active:scale-[0.98] border-none"
-//                       >
-//                         {isLoggingOut ? "Processing..." : "Confirm Logout"}
-//                       </AlertDialogAction>
-//                     </AlertDialogFooter>
-//                   </AlertDialogContent>
-//                 </AlertDialog>
-//               ) : (
-//                 <Link href="/sign-in">
-//                   <Button className="font-semibold tracking-wide px-5 shadow-md transition-all active:scale-[0.98] bg-blue-600 hover:bg-blue-700 text-white">
-//                     Login
-//                   </Button>
-//                 </Link>
-//               )}
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// }
-
-import React from "react";
-import NavLogo from "./NavLogo";
-import NavTitle from "./NavTitle";
-import NavActions from "./NavActions";
-
-export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/80 backdrop-blur-md shadow-sm transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between relative">
-        <NavLogo />
-        <NavTitle />
-        <NavActions />
+    <nav className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+        {/* Left Section: Logo & Desktop Links */}
+        <div className="flex items-center gap-8 flex-1">
+          {/* Logo Area */}
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+          >
+            <div className="p-2 bg-slate-900 dark:bg-slate-800 rounded-lg">
+              <Landmark className="h-5 w-5 text-white dark:text-blue-400" />
+            </div>
+            <span className="text-xl font-bold text-slate-900 dark:text-white">
+              Share
+              <span className="text-blue-600 dark:text-blue-500">Track</span>
+            </span>
+          </Link>
+        </div>
+
+        {/* Desktop Navigation Links (Hidden on Mobile) */}
+        <div className="hidden md:flex items-center gap-6 flex-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-semibold transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+                  isActive
+                    ? "text-blue-600 dark:text-blue-500"
+                    : "text-slate-500 dark:text-slate-400"
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Right Section: User Info, Actions & Mobile Toggle */}
+        <div className="flex items-center gap-4">
+          {/* User Info (Loading Skeleton vs Actual Data) */}
+          <div className="hidden md:flex flex-col items-end mr-2">
+            {status === "loading" ? (
+              // Skeleton Loader
+              <div className="space-y-1.5 flex flex-col items-end">
+                <Skeleton className="h-4 w-24 bg-slate-200 dark:bg-slate-800" />
+                <Skeleton className="h-3 w-32 bg-slate-200 dark:bg-slate-800" />
+              </div>
+            ) : (
+              // Actual User Info
+              <>
+                <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                  {session?.user?.username || "John Doe"}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {session?.user?.email || "john@enterprise.com"}
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Avatar / Dropdown / Theme Toggle (Your Component) */}
+          <NavActions />
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
+            aria-label="Toggle Menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Navigation Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t dark:border-slate-800 bg-white dark:bg-slate-950 absolute w-full shadow-lg">
+          <div className="px-4 pt-2 pb-4 space-y-1">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)} // লিংকে ক্লিক করলে মেনু বন্ধ হয়ে যাবে
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+                      : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+
+            {/* Mobile User Info Fallback (If you want mobile users to see their email) */}
+            {status === "authenticated" && (
+              <div className="mt-4 pt-4 border-t dark:border-slate-800 px-3">
+                <span className="block text-sm font-bold text-slate-900 dark:text-white">
+                  {session?.user?.username || "John Doe"}
+                </span>
+                <span className="block text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {session?.user?.email || "john@enterprise.com"}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
