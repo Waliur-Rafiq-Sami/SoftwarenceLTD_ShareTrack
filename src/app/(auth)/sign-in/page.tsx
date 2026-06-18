@@ -70,7 +70,6 @@ export default function SignInForm() {
           description: "Successfully signed in.",
         });
 
-        router.replace("/dashboard");
         router.push("/dashboard");
         router.refresh();
       }
