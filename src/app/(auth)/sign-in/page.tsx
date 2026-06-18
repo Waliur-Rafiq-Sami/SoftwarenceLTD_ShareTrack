@@ -71,6 +71,8 @@ export default function SignInForm() {
         });
 
         router.replace("/dashboard");
+        router.push("/dashboard");
+        router.refresh();
       }
     } finally {
       setIsLoading(false);
